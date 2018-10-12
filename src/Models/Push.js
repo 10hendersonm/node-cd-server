@@ -1,11 +1,15 @@
 class PushModel {
-  constructor(reqBody) {
-    this.pusherName = reqBody.pusher.name
-    this.repo = reqBody.repository.name
-    this.base = reqBody
+  constructor(req) {
+    this.repo = req.repository.name
+    this.pusher = req.pusher.email
+    this.repoOwner = req.repository.owner.email
+    this.pushedByOwner = this.pusher === this.repoOwner
+    this.base = req
   }
-  pusherName = null
   repo = null
+  pusher = null
+  repoOwner = null
+  pushedByOwner = false
   base = null
 }
 
