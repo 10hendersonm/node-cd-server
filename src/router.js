@@ -8,7 +8,11 @@ const router = Router()
 const docker = new Docker()
 
 var deployments
-docker.listContainers((containers) => {
+docker.listContainers((err, containers) => {
+  if (err) {
+    console.log('Error retrieving containers', err)
+    return
+  }
   deployments = containers.filter((container) => container.Image !== 'node-cd-server')
   console.log('deployments', deployments)
 })
