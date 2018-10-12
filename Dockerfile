@@ -1,6 +1,6 @@
 FROM node
 WORKDIR /app
 COPY . /app
-CMD yarn
-CMD yarn build
-RUN yarn serve
+RUN yarn
+RUN yarn build
+CMD yarn serve
