@@ -1,26 +1,17 @@
-import Docker from 'dockerode'
+// express
+import express from 'express'
+import bodyParser from 'body-parser'
+import router from './router'
 
-const docker = new Docker()
+// misc
+import chalk from 'chalk'
 
-docker.listContainers()
-  .then((containers) => {
-    console.log(containers)
-  })
+const app = express()
+const port = process.env.PORT || 8080
 
-// // express
-// import express from 'express'
-// import bodyParser from 'body-parser'
-// import router from './router'
+app.use(bodyParser.json())
+app.use(router)
 
-// // misc
-// import chalk from 'chalk'
-
-// const app = express()
-// const port = process.env.PORT || 8080
-
-// app.use(bodyParser.json())
-// app.use(router)
-
-// app.listen(port, () => {
-//   console.log(chalk.blue(`App available on port`), chalk.yellow(port))
-// })
+app.listen(port, () => {
+  console.log(chalk.blue(`App available on port`), chalk.yellow(port))
+})

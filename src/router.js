@@ -2,10 +2,16 @@ import {Router} from 'express'
 
 import PushModel from './Models/Push'
 import Deployment from './Models/Deployment';
+import Docker from 'dockerode'
 
 const router = Router()
+const docker = new Docker()
 
-const deploymentList = {}
+var deployments
+docker.listContainers((containers) => {
+  deployments = containers.filter((container) => container.Image !== 'node-cd-server')
+  console.log('deployments', deployments)
+})
 
 router.post('/cd', (req, res) => {
   console.log('New Request')

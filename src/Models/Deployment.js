@@ -1,4 +1,14 @@
-import {exec} from 'child_process'
+/*
+
+const docker = new Docker()
+
+docker.listContainers()
+.then((containers) => {
+  console.log(containers)
+})
+*/
+
+import Docker from 'dockerode'
 import SimpleGit from 'simple-git'
 import fs from 'fs'
 import rimraf from 'rimraf'
@@ -7,7 +17,7 @@ import chalk from 'chalk'
 import jsYaml from 'js-yaml'
 
 const simpleGit = SimpleGit()
-const startScript = '.cd.yml'
+// const startScript = '.cd.yml'
 
 const execScripts = (scriptArr, workDir) => {
   const topScript = scriptArr.shift()
