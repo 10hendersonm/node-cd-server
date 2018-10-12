@@ -2,7 +2,10 @@ import Docker from 'dockerode'
 
 const docker = new Docker()
 
-console.log(docker.getConfig())
+docker.listContainers()
+  .then((containers) => {
+    console.log(containers)
+  })
 
 // // express
 // import express from 'express'
