@@ -1,11 +1,29 @@
-import {spawn} from 'child_process'
+import {exec} from 'child_process'
 import SimpleGit from 'simple-git'
 import fs from 'fs'
 import rimraf from 'rimraf'
 import path from 'path'
+import chalk from 'chalk'
+import jsYaml from 'js-yaml'
 
 const simpleGit = SimpleGit()
-const startScript = '.cd.sh'
+const startScript = '.cd.yml'
+
+const execScripts = (scriptArr, workDir) => {
+  const topScript = scriptArr.shift()
+  console.log(`exec '${topScript}'`)
+  return new Promise((resolve, reject) => {
+    exec(topScript, {
+      cwd: workDir,
+    }, async () => {
+      console.log(`completed ${topScript}`)
+      if (scriptArr.length) {
+        await execScripts(scriptArr, workDir)
+      }
+      resolve()
+    })
+  })
+}
 
 class Deployment {
   constructor(push) {
@@ -34,12 +52,11 @@ class Deployment {
     }
     // git clone this.push.cloneUrl
     console.log(`Cloning '${this.push.cloneUrl}'`)
-    simpleGit.clone(this.push.cloneUrl, this.localPath)
-    const scriptUrl = path.join(this.localPath, startScript)
-    console.log('Starting child process')
-    this.childProcess = spawn(scriptUrl)
-    this.childProcess.on('error', (err) => {
-      console.log('Error in child process', err)
+    simpleGit.clone(this.push.cloneUrl, this.localPath, () => {
+      const scriptUrl = path.join(this.localPath, startScript)
+      const scriptContent = fs.readFileSync(scriptUrl, 'utf8')
+      const scriptLines = jsYaml.safeLoad(scriptContent)
+      execScripts(scriptLines, this.localPath)
     })
   }
 }
