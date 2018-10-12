@@ -5,6 +5,7 @@ import PushModel from './Models/Push'
 const router = Router()
 
 router.post('/cd', (req, res) => {
+  console.log('New Request')
   const push = new PushModel(req.body)
   console.log(push)
 
