@@ -13,14 +13,12 @@ docker.listContainers((err, containers) => {
     console.log('Error retrieving containers', err)
     return
   }
-  deployments = containers.filter((container) => container.Image !== 'node-cd-server')
+  deployments = containers //.filter((container) => container.Image !== 'node-cd-server')
   console.log('deployments', deployments)
 })
 
 router.post('/cd', (req, res) => {
-  console.log('New Request')
   const push = new PushModel(req.body)
-  console.log(push)
 
   if (!push.pushedByOwner) {
     res.status(401).send('Invalid pusher')
