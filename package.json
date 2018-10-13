@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon src/app.js --exec babel-node",
     "start:static": "babel-node src/app.js",
-    "build": "babel -d ./build ./src --delete-dir-on-start",
+    "build": "babel -d ./build ./src --delete-dir-on-start --copy-files",
     "serve": "node ./build/app.js"
   },
   "author": "",
