@@ -12,7 +12,7 @@ export const docker = new Docker()
 
 const Dockerfile = createDockerfile({
   projectName: 'node-cd-test',
-  commitId: 'test',
+  commitId: '1234',
   cloneUrl: 'https://github.com/10hendersonm/node-cd-server.git',
   buildSteps: [
     'yarn',
