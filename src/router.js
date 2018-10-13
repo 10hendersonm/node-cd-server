@@ -43,7 +43,7 @@ docker.createContainer({
   Binds: [
     '/var/run/docker.sock:/var/run/docker.sock',
   ],
-  Cmd: ['/bin/sh'],
+  // Cmd: ['/bin/sh'],
 }, (err, container) => {
   if (err) {
     console.log('error creating container')
@@ -51,9 +51,6 @@ docker.createContainer({
     return
   }
   console.log('created container')
-  container.attach({stream: true, stdout: true, stderr: true}, function (err, stream) {
-    stream.pipe(process.stdout);
-  });
   container.start((err) => {
     if (err) {
       console.log('error starting container', err)
@@ -61,11 +58,27 @@ docker.createContainer({
     }
     console.log('started container')
     container.exec({
-      Cmd: ['git clone https://github.com:10hendersonm/dnd-character-sheet.git /build'],
+      Cmd: ['/bin/sh', '-c', 'git clone https://github.com:10hendersonm/dnd-character-sheet.git /build'],
       AttachStdout: true,
+      AttachStderr: true,
     }, (err, exec) => {
-      // do I need to start the exec?
-      exec.start()
+      if (err) {
+        console.log('error creating exec')
+        console.log(err)
+        return
+      }
+      console.log('created exec')
+      exec.start((err, stream) => {
+        if (err) {
+          console.log('error starting exec')
+          console.log(err)
+          return
+        }
+        // opt?
+        stream.pipe(process.stdout)
+        console.log('started exec')
+        console.log(stream)
+      })
     })
   })
 })
