@@ -12,65 +12,51 @@ import uuid from 'uuid/v4'
 const router = Router()
 export const docker = new Docker()
 
-const commands = [
-  'echo 1',
-  'git clone https://github.com/10hendersonm/dnd-character-sheet.git download',
-  'echo 2',
-  'cd download',
-  'echo 3',
-  'yarn',
-  'echo 4',
-  'yarn build',
-  'echo 5',
-  'docker build -t asdf .',
-]
-
-
-docker.createContainer({
-  Image: 'node',
-  name: `tmp-builder-${uuid()}`,
-  AttachStdout: true,
-  AttachStderr: true,
-  Binds: [
-    '/var/run/docker.sock:/var/run/docker.sock',
-  ],
-  // Cmd: ['/bin/sh'],
-}, (err, container) => {
-  if (err) {
-    console.log('error creating container')
-    console.log(err)
-    return
-  }
-  console.log('created container')
-  container.start((err) => {
-    if (err) {
-      console.log('error starting container', err)
-      return
-    }
-    console.log('started container')
-    container.exec({
-      Cmd: ['/bin/sh', '-c', commands.join(' && ')],
-      AttachStdout: true,
-      AttachStderr: true,
-    }, (err, exec) => {
-      if (err) {
-        console.log('error creating exec')
-        console.log(err)
-        return
-      }
-      console.log('created exec')
-      exec.start((err, stream) => {
-        if (err) {
-          console.log('error starting exec')
-          console.log(err)
-          return
-        }
-        console.log('started exec')
-        stream.pipe(process.stdout)
-      })
-    })
-  })
-})
+// docker.createContainer({
+//   Image: 'node',
+//   name: `tmp-builder-${uuid()}`,
+//   AttachStdout: true,
+//   AttachStderr: true,
+//   Binds: [
+//     '/var/run/docker.sock:/var/run/docker.sock',
+//   ],
+//   // Cmd: ['/bin/sh'],
+// }, (err, container) => {
+//   if (err) {
+//     console.log('error creating container')
+//     console.log(err)
+//     return
+//   }
+//   console.log('created container')
+//   container.start((err) => {
+//     if (err) {
+//       console.log('error starting container', err)
+//       return
+//     }
+//     console.log('started container')
+//     container.exec({
+//       Cmd: ['/bin/sh', '-c', commands.join(' && ')],
+//       AttachStdout: true,
+//       AttachStderr: true,
+//     }, (err, exec) => {
+//       if (err) {
+//         console.log('error creating exec')
+//         console.log(err)
+//         return
+//       }
+//       console.log('created exec')
+//       exec.start((err, stream) => {
+//         if (err) {
+//           console.log('error starting exec')
+//           console.log(err)
+//           return
+//         }
+//         console.log('started exec')
+//         stream.pipe(process.stdout)
+//       })
+//     })
+//   })
+// })
 
 
 // docker.createContainer({
@@ -94,44 +80,53 @@ docker.createContainer({
 //   })
 // })
 
-// const dockerizeDir = path.join(__dirname, 'dockerize')
-// fs.writeFileSync(path.join(dockerizeDir, 'Dockerfile'), Dockerfile)
+const repoId = uuid()
+const dockerFileName = `Dockerfile-${repoId}`
+const dockerFilePath = path.join(__dirname, dockerFileName)
+fs.writeFileSync(dockerFilePath)
 
-// docker.buildImage({
-//   context: dockerizeDir,
-//   src: fs.readdirSync(dockerizeDir),
-// }, {t: 'tmp-build'}).then((stream) => {
-//   stream.pipe(process.stdout)
-//   docker.modem.followProgress(stream, (err, res) => {
-//     if (err) {
-//       console.log('error in Dockerfile progress')
-//       console.log(err)
-//       return
-//     }
-//     docker.createContainer({
-//       Image: 'tmp-build',
-//       name: `tmp-builder-${uuid()}`,
-//       AttachStdout: true,
-//       AttachStderr: true,
-//       Binds: [
-//         '/var/run/docker.sock:/var/run/docker.sock',
-//       ]
-//     }, (err, container) => {
-//       if (err) {
-//         console.log('error creating container')
-//         console.log(err)
-//         return
-//       }
-//       console.log('created container')
-//       container.start((err, data) => {
-//         if (err) {
-//           console.log('error starting container', err)
-//         }
-//         console.log('data', data)
-//       })
-//     })
-//   })
-// })
+docker.buildImage({
+  context: __dirname,
+  src: [dockerFileName],
+}, {t: 'tmp-build'}).then((stream) => {
+  stream.pipe(process.stdout)
+  docker.modem.followProgress(stream, (err, res) => {
+    if (err) {
+      console.log('error in Dockerfile progress')
+      console.log(err)
+      return
+    }
+    console.log('Finished creating container')
+    docker.createContainer({
+      Image: 'tmp-build',
+      name: `tmp-builder-${repoId}`,
+      AttachStdout: true,
+      AttachStderr: true,
+      Binds: [
+        '/var/run/docker.sock:/var/run/docker.sock',
+      ],
+      Tty: true,
+    }, (err, container) => {
+      if (err) {
+        console.log('error creating container')
+        console.log(err)
+        return
+      }
+      console.log('created container')
+      container.attach({stream: true, stdout: true, stderr: true}, (err, stream) => {
+        stream.pipe(process.stdout);
+      });
+
+
+      container.start((err) => {
+        if (err) {
+          console.log('error starting container', err)
+        }
+        console.log('started container')
+      })
+    })
+  })
+})
 
 
 
