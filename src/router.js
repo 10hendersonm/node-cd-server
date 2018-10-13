@@ -3,9 +3,25 @@ import {Router} from 'express'
 import PushModel from './Models/Push'
 import Deployment from './Models/Deployment';
 import Docker from 'dockerode'
+import fs from 'fs'
+import {createDockerfile} from './utils'
 
 const router = Router()
-const docker = new Docker()
+export const docker = new Docker()
+
+docker.buildImage({
+  context: __dirname,
+  src: ['Dockerfile'],
+}, {t: 'node-src-asdf'}, (err, response) => {
+  if (err) {
+    console.log('error building Dockerfile')
+    console.log(err)
+    return
+  }
+  console.log(response)
+})
+
+
 
 var deployments
 docker.listContainers((err, containers) => {
@@ -25,12 +41,21 @@ router.post('/cd', (req, res) => {
     return
   }
 
-  if (deploymentList[push.repoId]) {
-    // stop old process
-    var oldDeployment = deploymentList[push.repoId]
-    oldDeployment.stop()
-    oldDeployment = null
-  }
+  // var Dockerfile = createDockerfile({
+  //   projectName: push.repo,
+  //   commitId: push.commitId,
+  //   cloneUrl: push.cloneUrl,
+  //   buildSteps: [
+  //     'yarn start',
+  //   ],
+  // })
+  
+  // if (deploymentList[push.repoId]) {
+  //   // stop old process
+  //   var oldDeployment = deploymentList[push.repoId]
+  //   oldDeployment.stop()
+  //   oldDeployment = null
+  // }
 
   const deployment = new Deployment(push)
   deployment.start()
