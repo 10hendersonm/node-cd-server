@@ -1,9 +1,7 @@
-import uuid from 'uuid/v4'
-
-export const createDockerfile = ({projectName, commitId, cloneUrl, buildSteps}) => {
+export const createDockerfile = ({projectName, projectId, commitId, cloneUrl, buildSteps}) => {
   return `
 FROM node as builder
-RUN echo ${uuid()}
+RUN echo Running build for ${commitId}
 WORKDIR /build
 RUN git clone ${cloneUrl} /build
 ${buildSteps.map((step) =>
@@ -13,6 +11,6 @@ ${buildSteps.map((step) =>
 FROM docker
 WORKDIR /build
 COPY --from=builder /build .
-CMD docker build --no-cache -t ${projectName}-${commitId} .
+CMD docker build --no-cache -t ${projectName}-${projectId}:${commitId} .
 `
 }

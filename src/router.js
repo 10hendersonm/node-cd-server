@@ -40,6 +40,7 @@ router.post('/cd', (req, res) => {
   const dockerFilePath = path.join(dockerFileDirectory, dockerFileName)
   const dockerFileContent = createDockerfile({
     projectName: push.repo,
+    projectId: push.repoId,
     commitId: push.commitId,
     cloneUrl: push.cloneUrl,
     buildSteps: [
