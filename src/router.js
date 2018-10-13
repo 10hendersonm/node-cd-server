@@ -6,6 +6,8 @@ import Docker from 'dockerode'
 import fs from 'fs'
 import path from 'path'
 import {createDockerfile} from './utils'
+import uuid from 'uuid/v4'
+
 
 const router = Router()
 export const docker = new Docker()
@@ -37,7 +39,7 @@ docker.buildImage({
     }
     docker.createContainer({
       Image: 'tmp-build',
-      name: 'tmp-builder',
+      name: `tmp-builder-${uuid()}`,
       AttachStdout: true,
       AttachStderr: true,
       Binds: [
