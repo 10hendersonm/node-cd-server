@@ -50,10 +50,11 @@ router.post('/cd', (req, res) => {
   fs.mkdirSync(dockerFileDirectory)
   fs.writeFileSync(dockerFilePath, dockerFileContent)
 
+  const buildImage = `tmp-build-${push.commitId}`
   docker.buildImage({
     context: dockerFileDirectory,
     src: [dockerFileName],
-  }, {t: 'tmp-build'}).then((stream) => {
+  }, {t: buildImage}).then((stream) => {
     stream.pipe(process.stdout)
     docker.modem.followProgress(stream, (err, res) => {
       if (err) {
@@ -63,8 +64,8 @@ router.post('/cd', (req, res) => {
       }
       console.log('Finished creating container')
       docker.createContainer({
-        Image: 'tmp-build',
-        name: `tmp-builder-${repoId}`,
+        Image: buildImage,
+        // name: `tmp-builder-${push.commitId}`,
         AttachStdout: true,
         AttachStderr: true,
         Binds: [
