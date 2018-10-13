@@ -1,6 +1,6 @@
 export const createDockerfile = ({projectName, commitId, cloneUrl, buildSteps}) => {
   return `FROM node
-COPY /app/build/dockerize.js /tmp
+COPY /app/build/dockerize.js /tmp/dockerize.js
 WORKDIR /build
 RUN git clone ${cloneUrl} /build
 ${buildSteps.map((step) => `RUN ${step}`).join('\r\n')}
