@@ -2,6 +2,8 @@ const docker = require('dockerode')()
 
 const [,,imageName, ...args] = process.argv
 
+console.log('Building image: ', imageName)
+
 docker.buildImage({
   src: ['Dockerfile'],
 }, {t: imageName}).then((stream) => {
@@ -12,6 +14,7 @@ docker.buildImage({
       console.log(err)
       return
     }
+    console.log('Image created')
   })
 })
 

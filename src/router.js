@@ -20,8 +20,8 @@ const Dockerfile = createDockerfile({
   ],
 })
 
-console.log(Dockerfile)
 fs.writeFileSync(path.join(__dirname, 'Dockerfile'), Dockerfile)
+fs.copyFileSync('./build/dockerize.js', __dirname)
 
 docker.buildImage({
   context: __dirname,
