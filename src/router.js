@@ -56,7 +56,6 @@ router.post('/cd', (req, res) => {
     src: [dockerFileName],
   }, {
     t: buildImage,
-    '-no-cache': null,
   }).then((stream) => {
     stream.pipe(process.stdout)
     docker.modem.followProgress(stream, (err, res) => {

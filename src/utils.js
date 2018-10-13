@@ -1,5 +1,7 @@
+import uuid from 'uuid/v4'
+
 export const createDockerfile = ({projectName, commitId, cloneUrl, buildSteps}) => {
-  return `
+  return `#${uuid()}
 FROM node as builder
 WORKDIR /build
 RUN git clone ${cloneUrl} /build
