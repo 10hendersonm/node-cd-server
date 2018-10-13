@@ -10,6 +10,6 @@ ${buildSteps.map((step) =>
 FROM docker
 WORKDIR /build
 COPY --from=builder /build .
-CMD docker build -t ${projectName}-${commitId} .
+CMD docker build --no-cache -t ${projectName}-${commitId} .
 `
 }
