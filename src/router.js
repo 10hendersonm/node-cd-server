@@ -93,6 +93,7 @@ const dockerFileContent = createDockerfile({
     'yarn build',
   ],
 })
+fs.mkdirSync(dockerFileDirectory)
 fs.writeFileSync(dockerFilePath, dockerFileContent)
 
 docker.buildImage({
