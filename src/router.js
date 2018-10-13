@@ -43,7 +43,7 @@ docker.createContainer({
   Binds: [
     '/var/run/docker.sock:/var/run/docker.sock',
   ],
-  Cmd: ['git clone https://github.com/10hendersonm/dnd-character-sheet.git'],
+  Cmd: ['/bin/sh', '-c', 'git clone https://github.com/10hendersonm/dnd-character-sheet.git'],
 }, (err, container) => {
   if (err) {
     console.log('error creating container')
