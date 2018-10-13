@@ -7,14 +7,13 @@ console.log('Building image: ', imageName)
 docker.buildImage({
   src: ['Dockerfile'],
 }, {t: imageName}).then((stream) => {
-  stream.pipe(process.stdout)
+  // stream.pipe(process.stdout)
   docker.modem.followProgress(stream, (err, res) => {
     if (err) {
       console.log('error in Dockerfile progress')
       console.log(err)
-      return
     }
-    console.log('Image created')
+    console.log('Image created?', res)
   })
 })
 
