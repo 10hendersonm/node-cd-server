@@ -152,32 +152,32 @@ docker.listContainers((err, containers) => {
 })
 
 router.post('/cd', (req, res) => {
-  const push = new PushModel(req.body)
+  // const push = new PushModel(req.body)
 
-  if (!push.pushedByOwner) {
-    res.status(401).send('Invalid pusher')
-    return
-  }
-
-  // var Dockerfile = createDockerfile({
-  //   projectName: push.repo,
-  //   commitId: push.commitId,
-  //   cloneUrl: push.cloneUrl,
-  //   buildSteps: [
-  //     'yarn start',
-  //   ],
-  // })
-  
-  // if (deploymentList[push.repoId]) {
-  //   // stop old process
-  //   var oldDeployment = deploymentList[push.repoId]
-  //   oldDeployment.stop()
-  //   oldDeployment = null
+  // if (!push.pushedByOwner) {
+  //   res.status(401).send('Invalid pusher')
+  //   return
   // }
 
-  const deployment = new Deployment(push)
-  deployment.start()
-  deploymentList[push.repoId] = deployment
+  // // var Dockerfile = createDockerfile({
+  // //   projectName: push.repo,
+  // //   commitId: push.commitId,
+  // //   cloneUrl: push.cloneUrl,
+  // //   buildSteps: [
+  // //     'yarn start',
+  // //   ],
+  // // })
+  
+  // // if (deploymentList[push.repoId]) {
+  // //   // stop old process
+  // //   var oldDeployment = deploymentList[push.repoId]
+  // //   oldDeployment.stop()
+  // //   oldDeployment = null
+  // // }
+
+  // const deployment = new Deployment(push)
+  // deployment.start()
+  // deploymentList[push.repoId] = deployment
   
   res.json({
     status: 'success?'
