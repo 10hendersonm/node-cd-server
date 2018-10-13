@@ -3,6 +3,5 @@ export const createDockerfile = ({projectName, commitId, cloneUrl, buildSteps}) 
 WORKDIR /build
 RUN git clone ${cloneUrl} /build
 ${buildSteps.map((step) => `RUN ${step}`).join('\r\n')}
-RUN docker build -t ${projectName}-${commitId} .
 `
 }
