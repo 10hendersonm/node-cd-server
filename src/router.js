@@ -26,14 +26,7 @@ fs.writeFileSync(path.join(__dirname, 'Dockerfile'), Dockerfile)
 docker.buildImage({
   context: __dirname,
   src: ['Dockerfile'],
-}, {t: 'tmp-build'}, (err, response) => {
-  if (err) {
-    console.log('error building Dockerfile')
-    console.log(err)
-    return
-  }
-  console.log('docker build callback', response)
-}).then((stream) => {
+}, {t: 'tmp-build'}).then((stream) => {
   dockerode.modem.followProgress(stream, (err, res) => {
     if (err) {
       console.log('error in Dockerfile progress?')
