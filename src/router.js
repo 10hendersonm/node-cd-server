@@ -46,7 +46,14 @@ docker.buildImage({
         console.log(err)
         return
       }
-      container.start()
+      console.log('starting container')
+      container.start((err, data) => {
+        console.log('container start')
+        if (err) {
+          console.log(err)
+        }
+        console.log(data)
+      })
     })
   })
 })
