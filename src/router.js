@@ -83,7 +83,16 @@ export const docker = new Docker()
 const repoId = uuid()
 const dockerFileName = `Dockerfile-${repoId}`
 const dockerFilePath = path.join(__dirname, dockerFileName)
-fs.writeFileSync(dockerFilePath)
+const dockerFileContent = createDockerfile({
+  projectName: 'dnd-character-sheet',
+  commitId: repoId,
+  cloneUrl: 'https://github.com/10hendersonm/dnd-character-sheet.git',
+  buildSteps: [
+    'yarn',
+    'yarn build',
+  ],
+})
+fs.writeFileSync(dockerFilePath, dockerFileContent)
 
 docker.buildImage({
   context: __dirname,
