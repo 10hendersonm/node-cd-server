@@ -23,8 +23,9 @@ const Dockerfile = createDockerfile({
 })
 
 fs.writeFileSync(path.join(__dirname, 'Dockerfile'), Dockerfile)
-fs.copyFileSync('./build/dockerize.js', path.join(__dirname, 'dockerize.js'))
-console.log(fs.readdirSync(__dirname))
+
+const tmpDir = path.join(__dirname, uuid())
+fs.mkdirSync(tmpDir)
 
 docker.buildImage({
   context: __dirname,
@@ -44,6 +45,7 @@ docker.buildImage({
       AttachStderr: true,
       Binds: [
         '/var/run/docker.sock:/var/run/docker.sock',
+        `${tmpDir}:/build`,
       ]
     }, (err, container) => {
       if (err) {
@@ -51,14 +53,8 @@ docker.buildImage({
         console.log(err)
         return
       }
-      console.log('starting container')
-      container.start((err, data) => {
-        console.log('container start')
-        if (err) {
-          console.log('error', err)
-        }
-        console.log('data', data)
-      })
+      console.log('created container')
+      console.log(fs.readdirSync(tmpDir))
     })
   })
 })
