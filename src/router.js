@@ -61,7 +61,7 @@ docker.createContainer({
     }
     console.log('started container')
     container.exec({
-      Cmd: ['yarn'],
+      Cmd: ['git clone https://github.com:10hendersonm/dnd-character-sheet.git /build'],
       AttachStdout: true,
     }, (err, exec) => {
       // do I need to start the exec?
