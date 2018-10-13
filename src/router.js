@@ -27,8 +27,8 @@ docker.buildImage({
   context: __dirname,
   src: ['Dockerfile'],
 }, {t: 'tmp-build'}).then((stream) => {
+  stream.pipe(process.stdout)
   docker.modem.followProgress(stream, (err, res) => {
-    stream.pipe(process.stdout)
     if (err) {
       console.log('error in Dockerfile progress?')
       console.log(err)
