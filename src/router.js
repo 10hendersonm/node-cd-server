@@ -10,7 +10,7 @@ import {createDockerfile} from './utils'
 const router = Router()
 export const docker = new Docker()
 
-fs.writeFileSync(path.join(__dirname, 'Dockerfile'), createDockerfile({
+const Dockerfile = createDockerfile({
   projectName: 'node-cd-test',
   commitId: 'test',
   cloneUrl: 'https://github.com/10hendersonm/node-cd-server.git',
@@ -18,7 +18,10 @@ fs.writeFileSync(path.join(__dirname, 'Dockerfile'), createDockerfile({
     'yarn',
     'yarn build',
   ],
-}))
+})
+
+console.log(Dockerfile)
+fs.writeFileSync(path.join(__dirname, 'Dockerfile'), Dockerfile)
 
 docker.buildImage({
   context: __dirname,
