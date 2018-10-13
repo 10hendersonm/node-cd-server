@@ -50,9 +50,9 @@ docker.buildImage({
       container.start((err, data) => {
         console.log('container start')
         if (err) {
-          console.log(err)
+          console.log('error', err)
         }
-        console.log(data)
+        console.log('data', data)
       })
     })
   })
