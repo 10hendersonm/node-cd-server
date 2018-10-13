@@ -65,7 +65,7 @@ docker.createContainer({
       AttachStdout: true,
     }, (err, exec) => {
       // do I need to start the exec?
-      // exec.start()
+      exec.start()
     })
   })
 })
