@@ -42,7 +42,8 @@ docker.createContainer({
   AttachStderr: true,
   Binds: [
     '/var/run/docker.sock:/var/run/docker.sock',
-  ]
+  ],
+  Cmd: ['ls'],
 }, (err, container) => {
   if (err) {
     console.log('error creating container')
