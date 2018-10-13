@@ -4,15 +4,26 @@ import PushModel from './Models/Push'
 import Deployment from './Models/Deployment';
 import Docker from 'dockerode'
 import fs from 'fs'
+import path from 'path'
 import {createDockerfile} from './utils'
 
 const router = Router()
 export const docker = new Docker()
 
+fs.writeFileSync(path.join(__dirname, 'Dockerfile'), createDockerfile({
+  projectName: 'node-cd-test',
+  commitId: 'test',
+  cloneUrl: 'https://github.com/10hendersonm/node-cd-server.git',
+  buildSteps: [
+    'yarn',
+    'yarn build',
+  ],
+}))
+
 docker.buildImage({
   context: __dirname,
   src: ['Dockerfile'],
-}, {t: 'node-src-asdf'}, (err, response) => {
+}, {t: 'tmp-build'}, (err, response) => {
   if (err) {
     console.log('error building Dockerfile')
     console.log(err)
