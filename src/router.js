@@ -47,7 +47,7 @@ docker.listContainers((err, containers) => {
     return
   }
   deployments = containers //.filter((container) => container.Image !== 'node-cd-server')
-  console.log('deployments', deployments)
+  // console.log('deployments', deployments)
 })
 
 router.post('/cd', (req, res) => {
