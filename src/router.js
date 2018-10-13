@@ -25,43 +25,38 @@ const commands = [
   'docker build -t asdf .',
 ]
 
-const createCommand = (command) => ({
-  Cmd: ['/bin/sh', '-c', command],
-  AttachStdout: true,
-  AttachStderr: true,
-})
 
-const runCommands = (commandArr, container) => {
-  const command = commandArr.shift()
-  return new Promise((resolve, reject) => {
-    container.exec(createCommand(command), (err, exec) => {
-      if (err) {
-        console.log('error creating exec')
-        console.log(err)
-        reject(err)
-        return
-      }
-      console.log('created exec')
-      exec.start((err, stream) => {
-        if (err) {
-          console.log('error starting exec')
-          console.log(err)
-          reject(err)
-          return
-        }
-        console.log('started exec')
-        stream.pipe(process.stdout)
-        if (commandArr.length) {
-          runCommands(commandArr, container)
-            .then(resolve)
-            .catch(reject)
-        } else {
-          resolve()
-        }
-      })
-    })
-  })
-}
+// const runCommands = (commandArr, container) => {
+//   const command = commandArr.shift()
+//   return new Promise((resolve, reject) => {
+//     container.exec(createCommand(command), (err, exec) => {
+//       if (err) {
+//         console.log('error creating exec')
+//         console.log(err)
+//         reject(err)
+//         return
+//       }
+//       console.log('created exec')
+//       exec.start((err, stream) => {
+//         if (err) {
+//           console.log('error starting exec')
+//           console.log(err)
+//           reject(err)
+//           return
+//         }
+//         console.log('started exec')
+//         stream.pipe(process.stdout)
+//         if (commandArr.length) {
+//           runCommands(commandArr, container)
+//             .then(resolve)
+//             .catch(reject)
+//         } else {
+//           resolve()
+//         }
+//       })
+//     })
+//   })
+// }
 
 // const Dockerfile = createDockerfile({
 //   projectName: 'node-cd-test',
@@ -81,7 +76,7 @@ docker.createContainer({
   Binds: [
     '/var/run/docker.sock:/var/run/docker.sock',
   ],
-  // Cmd: ['/bin/sh'],
+  Cmd: ['/bin/sh', '-c', commands.join(' && ')],
 }, (err, container) => {
   if (err) {
     console.log('error creating container')
@@ -95,7 +90,6 @@ docker.createContainer({
       return
     }
     console.log('started container')
-    runCommands(commands, container)
   })
 })
 
