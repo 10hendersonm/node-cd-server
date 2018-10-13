@@ -43,13 +43,16 @@ docker.createContainer({
   Binds: [
     '/var/run/docker.sock:/var/run/docker.sock',
   ],
-  Cmd: ['ls'],
+  Cmd: ['git clone https://github.com/10hendersonm/dnd-character-sheet.git'],
 }, (err, container) => {
   if (err) {
     console.log('error creating container')
     console.log(err)
     return
   }
+  container.attach({stream: true, stdout: true, stderr: true}, function (err, stream) {
+    stream.pipe(process.stdout);
+  });
   console.log('created container')
   container.start((err, data) => {
     if (err) {
