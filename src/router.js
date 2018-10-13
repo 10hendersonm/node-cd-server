@@ -13,10 +13,15 @@ const router = Router()
 export const docker = new Docker()
 
 const commands = [
+  'echo 1',
   'git clone https://github.com/10hendersonm/dnd-character-sheet.git /build',
+  'echo 2',
   'cd /build',
+  'echo 3',
   'yarn',
+  'echo 4',
   'yarn build',
+  'echo 5',
   'docker build -t asdf .',
 ]
 
@@ -32,6 +37,7 @@ const commands = [
 
 docker.createContainer({
   Image: 'node',
+  name: 'asdf1',
   Cmd: commands.map((command) => ['/bin/bash', '-c', command]),
   Binds: [
     '/var/run/docker.sock:/var/run/docker.sock',
