@@ -12,54 +12,82 @@ import uuid from 'uuid/v4'
 const router = Router()
 export const docker = new Docker()
 
-const Dockerfile = createDockerfile({
-  projectName: 'node-cd-test',
-  commitId: '1234',
-  cloneUrl: 'https://github.com/10hendersonm/dnd-character-sheet.git',
-  buildSteps: [
-    'yarn',
-    'yarn build',
+const commands = [
+  'git clone https://github.com/10hendersonm/dnd-character-sheet.git /build',
+  'cd /build',
+  'yarn',
+  'yarn build',
+  'docker build -t asdf .',
+]
+
+// const Dockerfile = createDockerfile({
+//   projectName: 'node-cd-test',
+//   commitId: '1234',
+//   cloneUrl: 'https://github.com/10hendersonm/dnd-character-sheet.git',
+//   buildSteps: [
+//     'yarn',
+//     'yarn build',
+//   ],
+// })
+
+docker.createContainer({
+  Image: 'node',
+  Cmd: commands.map((command) => ['/bin/bash', '-c', command]),
+  Binds: [
+    '/var/run/docker.sock:/var/run/docker.sock',
   ],
-})
-
-const dockerizeDir = path.join(__dirname, 'dockerize')
-fs.writeFileSync(path.join(dockerizeDir, 'Dockerfile'), Dockerfile)
-
-docker.buildImage({
-  context: dockerizeDir,
-  src: fs.readdirSync(dockerizeDir),
-}, {t: 'tmp-build'}).then((stream) => {
-  stream.pipe(process.stdout)
-  docker.modem.followProgress(stream, (err, res) => {
-    if (err) {
-      console.log('error in Dockerfile progress')
-      console.log(err)
-      return
-    }
-    docker.createContainer({
-      Image: 'tmp-build',
-      name: `tmp-builder-${uuid()}`,
-      AttachStdout: true,
-      AttachStderr: true,
-      Binds: [
-        '/var/run/docker.sock:/var/run/docker.sock',
-      ]
-    }, (err, container) => {
-      if (err) {
-        console.log('error creating container')
-        console.log(err)
-        return
-      }
-      console.log('created container')
-      container.start((err, data) => {
-        if (err) {
-          console.log('error starting container', err)
-        }
-        console.log('data', data)
-      })
-    })
+  AttachStdout: true,
+  AttachStderr: true,
+}, (err, container) => {
+  if (err) {
+    console.log('error creating container')
+    console.log(err)
+    return
+  }
+  console.log('container created')
+  container.start((err, data) => {
+    console.log(data)
   })
 })
+
+// const dockerizeDir = path.join(__dirname, 'dockerize')
+// fs.writeFileSync(path.join(dockerizeDir, 'Dockerfile'), Dockerfile)
+
+// docker.buildImage({
+//   context: dockerizeDir,
+//   src: fs.readdirSync(dockerizeDir),
+// }, {t: 'tmp-build'}).then((stream) => {
+//   stream.pipe(process.stdout)
+//   docker.modem.followProgress(stream, (err, res) => {
+//     if (err) {
+//       console.log('error in Dockerfile progress')
+//       console.log(err)
+//       return
+//     }
+//     docker.createContainer({
+//       Image: 'tmp-build',
+//       name: `tmp-builder-${uuid()}`,
+//       AttachStdout: true,
+//       AttachStderr: true,
+//       Binds: [
+//         '/var/run/docker.sock:/var/run/docker.sock',
+//       ]
+//     }, (err, container) => {
+//       if (err) {
+//         console.log('error creating container')
+//         console.log(err)
+//         return
+//       }
+//       console.log('created container')
+//       container.start((err, data) => {
+//         if (err) {
+//           console.log('error starting container', err)
+//         }
+//         console.log('data', data)
+//       })
+//     })
+//   })
+// })
 
 
 
