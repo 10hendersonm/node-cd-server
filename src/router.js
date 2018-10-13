@@ -25,6 +25,44 @@ const commands = [
   'docker build -t asdf .',
 ]
 
+const createCommand = (command) => ({
+  Cmd: ['/bin/sh', '-c', command],
+  AttachStdout: true,
+  AttachStderr: true,
+})
+
+const runCommands = (commandArr, container) => {
+  const command = commandArr.shift()
+  return new Promise((resolve, reject) => {
+    container.exec(createCommand(command), (err, exec) => {
+      if (err) {
+        console.log('error creating exec')
+        console.log(err)
+        reject(err)
+        return
+      }
+      console.log('created exec')
+      exec.start((err, stream) => {
+        if (err) {
+          console.log('error starting exec')
+          console.log(err)
+          reject(err)
+          return
+        }
+        console.log('started exec')
+        stream.pipe(process.stdout)
+        if (commandArr.length) {
+          runCommands(commandArr, container)
+            .then(resolve)
+            .catch(reject)
+        } else {
+          resolve()
+        }
+      })
+    })
+  })
+}
+
 // const Dockerfile = createDockerfile({
 //   projectName: 'node-cd-test',
 //   commitId: '1234',
@@ -57,29 +95,7 @@ docker.createContainer({
       return
     }
     console.log('started container')
-    container.exec({
-      Cmd: ['/bin/sh', '-c', 'git clone https://github.com:10hendersonm/dnd-character-sheet.git /build'],
-      AttachStdout: true,
-      AttachStderr: true,
-    }, (err, exec) => {
-      if (err) {
-        console.log('error creating exec')
-        console.log(err)
-        return
-      }
-      console.log('created exec')
-      exec.start((err, stream) => {
-        if (err) {
-          console.log('error starting exec')
-          console.log(err)
-          return
-        }
-        // opt?
-        stream.pipe(process.stdout)
-        console.log('started exec')
-        console.log(stream)
-      })
-    })
+    runCommands(commands, container)
   })
 })
 
