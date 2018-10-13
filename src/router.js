@@ -14,9 +14,9 @@ export const docker = new Docker()
 
 const commands = [
   'echo 1',
-  'git clone https://github.com/10hendersonm/dnd-character-sheet.git /build',
+  'git clone https://github.com/10hendersonm/dnd-character-sheet.git download',
   'echo 2',
-  'cd /build',
+  'cd download',
   'echo 3',
   'yarn',
   'echo 4',
