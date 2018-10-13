@@ -34,7 +34,7 @@ docker.createContainer({
   Binds: [
     '/var/run/docker.sock:/var/run/docker.sock',
   ],
-  Cmd: ['/bin/sh'],
+  // Cmd: ['/bin/sh'],
 }, (err, container) => {
   if (err) {
     console.log('error creating container')
