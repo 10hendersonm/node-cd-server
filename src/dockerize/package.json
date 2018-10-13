@@ -1,0 +1,11 @@
+{
+  "name": "dockerize",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dockerize.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dockerode": "^2.5.7"
+  }
+}

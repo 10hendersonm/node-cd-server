@@ -22,11 +22,12 @@ const Dockerfile = createDockerfile({
   ],
 })
 
-fs.writeFileSync(path.join(__dirname, 'Dockerfile'), Dockerfile)
+const dockerizeDir = path.join(__dirname, 'dockerize')
+fs.writeFileSync(path.join(dockerizeDir, 'Dockerfile'), Dockerfile)
 
 docker.buildImage({
-  context: __dirname,
-  src: ['Dockerfile', 'dockerize.js'],
+  context: dockerizeDir,
+  src: fs.readdirSync(dockerizeDir),
 }, {t: 'tmp-build'}).then((stream) => {
   stream.pipe(process.stdout)
   docker.modem.followProgress(stream, (err, res) => {
