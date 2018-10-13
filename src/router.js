@@ -37,24 +37,48 @@ const commands = [
 
 docker.createContainer({
   Image: 'node',
-  name: 'asdf1',
-  Cmd: commands.map((command) => ['/bin/bash', '-c', command]),
-  Binds: [
-    '/var/run/docker.sock:/var/run/docker.sock',
-  ],
+  name: `tmp-builder-${uuid()}`,
   AttachStdout: true,
   AttachStderr: true,
+  Binds: [
+    '/var/run/docker.sock:/var/run/docker.sock',
+  ]
 }, (err, container) => {
   if (err) {
     console.log('error creating container')
     console.log(err)
     return
   }
-  console.log('container created')
+  console.log('created container')
   container.start((err, data) => {
-    console.log(data)
+    if (err) {
+      console.log('error starting container', err)
+    }
+    console.log('data', data)
   })
 })
+
+
+// docker.createContainer({
+//   Image: 'node',
+//   name: 'asdf1',
+//   Cmd: commands.map((command) => ['/bin/bash', '-c', command]),
+//   Binds: [
+//     '/var/run/docker.sock:/var/run/docker.sock',
+//   ],
+//   AttachStdout: true,
+//   AttachStderr: true,
+// }, (err, container) => {
+//   if (err) {
+//     console.log('error creating container')
+//     console.log(err)
+//     return
+//   }
+//   console.log('container created')
+//   container.start((err, data) => {
+//     console.log(data)
+//   })
+// })
 
 // const dockerizeDir = path.join(__dirname, 'dockerize')
 // fs.writeFileSync(path.join(dockerizeDir, 'Dockerfile'), Dockerfile)
