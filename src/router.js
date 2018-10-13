@@ -89,8 +89,8 @@ const dockerFileContent = createDockerfile({
   commitId: repoId,
   cloneUrl: 'https://github.com/10hendersonm/dnd-character-sheet.git',
   buildSteps: [
-    'yarn',
-    'yarn build',
+    'npm install',
+    'npm run build',
   ],
 })
 fs.mkdirSync(dockerFileDirectory)
