@@ -43,22 +43,30 @@ docker.createContainer({
   Binds: [
     '/var/run/docker.sock:/var/run/docker.sock',
   ],
-  Cmd: ['/bin/sh', '-c', 'git clone https://github.com/10hendersonm/dnd-character-sheet.git'],
+  Cmd: ['/bin/sh'],
 }, (err, container) => {
   if (err) {
     console.log('error creating container')
     console.log(err)
     return
   }
+  console.log('created container')
   container.attach({stream: true, stdout: true, stderr: true}, function (err, stream) {
     stream.pipe(process.stdout);
   });
-  console.log('created container')
-  container.start((err, data) => {
+  container.start((err) => {
     if (err) {
       console.log('error starting container', err)
+      return
     }
-    console.log('data', data)
+    console.log('started container')
+    container.exec({
+      Cmd: ['yarn'],
+      AttachStdout: true,
+    }, (err, exec) => {
+      // do I need to start the exec?
+      // exec.start()
+    })
   })
 })
 
