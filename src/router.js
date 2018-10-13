@@ -32,7 +32,16 @@ docker.buildImage({
     console.log(err)
     return
   }
-  console.log(response)
+  console.log('docker build callback', response)
+}).then((stream) => {
+  dockerode.modem.followProgress(stream, (err, res) => {
+    if (err) {
+      console.log('error in Dockerfile progress?')
+      console.log(err)
+      return
+    }
+    console.log('followProgress', res)
+  })
 })
 
 
