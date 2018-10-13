@@ -81,8 +81,9 @@ export const docker = new Docker()
 // })
 
 const repoId = uuid()
-const dockerFileName = `Dockerfile-${repoId}`
-const dockerFilePath = path.join(__dirname, dockerFileName)
+const dockerFileDirectory = path.join(__dirname, `dockerfile-${repoId}`)
+const dockerFileName = 'Dockerfile'
+const dockerFilePath = path.join(dockerFileDirectory, dockerFileName)
 const dockerFileContent = createDockerfile({
   projectName: 'dnd-character-sheet',
   commitId: repoId,
@@ -95,7 +96,7 @@ const dockerFileContent = createDockerfile({
 fs.writeFileSync(dockerFilePath, dockerFileContent)
 
 docker.buildImage({
-  context: __dirname,
+  context: dockerFileDirectory,
   src: [dockerFileName],
 }, {t: 'tmp-build'}).then((stream) => {
   stream.pipe(process.stdout)
